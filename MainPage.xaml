@@ -10,16 +10,16 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:ToDo">
                     <VerticalStackLayout>
-                        <HorizontalStackLayout Padding="10, 20">
+                        <Grid ColumnDefinitions="Auto, *" Padding="10, 20">
                             <CheckBox x:Name="IsDoneCheckBox" IsChecked="{Binding IsDone}" />
-                            <Label Text="{Binding Description}" VerticalOptions="Center">
+                            <Label Grid.Column="1" Text="{Binding Description}" VerticalOptions="Center">
                                 <Label.Triggers>
                                     <DataTrigger TargetType="Label" Binding="{Binding Source={Reference IsDoneCheckBox}, Path=IsChecked}" Value="True">
                                         <Setter Property="TextDecorations" Value="Strikethrough" />
                                     </DataTrigger>
                                 </Label.Triggers>
                             </Label>
-                        </HorizontalStackLayout>
+                        </Grid>
                         <BoxView Style="{StaticResource Separator}" />
                     </VerticalStackLayout>
                 </DataTemplate>
