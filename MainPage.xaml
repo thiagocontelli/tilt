@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:Tilt.ViewModels"
+             xmlns:models="clr-namespace:Tilt.Models"
+             x:DataType="viewModels:MainViewModel"
+             x:Class="Tilt.MainPage">
+    <Grid RowDefinitions="*, Auto">
+        <CollectionView ItemsSource="{Binding ToDos}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:ToDo">
+                    <VerticalStackLayout>
+                        <HorizontalStackLayout Padding="10, 20">
+                            <CheckBox x:Name="IsDoneCheckBox" IsChecked="{Binding IsDone}" />
+                            <Label Text="{Binding Description}" VerticalOptions="Center">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Source={Reference IsDoneCheckBox}, Path=IsChecked}" Value="True">
+                                        <Setter Property="TextDecorations" Value="Strikethrough" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </HorizontalStackLayout>
+                        <BoxView Style="{StaticResource Separator}" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <Label Text="Your ToDo list looks empty =(" HorizontalOptions="Center" VerticalOptions="Center" />
+            </CollectionView.EmptyView>
+        </CollectionView>
+
+        <VerticalStackLayout Grid.Row="1" Padding="20, 10">
+            <Button Text="Add +" Clicked="Add_Clicked" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>
