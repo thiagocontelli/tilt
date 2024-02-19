@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Tilt.Models;
+using Tilt.Repositories;
 
 namespace Tilt.ViewModels;
 
@@ -8,52 +10,50 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     IEnumerable<ToDo> toDos = [];
 
-    public MainViewModel()
+    readonly ToDoRepository _toDoRepository;
+
+    public MainViewModel(ToDoRepository toDoRepository)
     {
-        toDos =
-        [
-            new()
-            {
-                Id = 1,
-                CreatedaAt = DateTime.Now,
-                Description = "First ToDo",
-                IsDone = false
-            },
-            new()
-            {
-                Id = 2,
-                CreatedaAt = DateTime.Now,
-                Description = "Second ToDo",
-                IsDone = false
-            },
-            new()
-            {
-                Id = 3,
-                CreatedaAt = DateTime.Now,
-                Description = "Third ToDo",
-                IsDone = false
-            }
-        ];
+        _toDoRepository = toDoRepository;
+
+        Task.Run(GetToDos);
     }
 
-    public void ClearAllToDos() => ToDos = [];
+    async Task GetToDos() => ToDos = await _toDoRepository.GetToDos();
 
-    public void AddTodo(string toDoDescription)
+    public async void ClearAllToDos()
+    {
+        await _toDoRepository.DeleteToDos();
+        await GetToDos();
+    }
+
+    public async void AddTodo(string toDoDescription)
     {
         if (string.IsNullOrWhiteSpace(toDoDescription)) return;
 
-        List<ToDo> newToDos = ToDos.ToList();
+        ToDo newToDo = new()
+        {
+            Description = toDoDescription,
+        };
+
+        await _toDoRepository.UpsertToDo(newToDo);
+        await GetToDos();
+    }
+
+    [RelayCommand]
+    async Task ToggleIsDone(ToDo? toDo)
+    {
+        if (toDo == null) return;
 
         ToDo newToDo = new()
         {
-            Id = newToDos.Count + 1,
-            CreatedaAt = DateTime.Now,
-            Description = toDoDescription,
-            IsDone = false
+            CreatedAt = toDo.CreatedAt,
+            Description = toDo.Description,
+            Id = toDo.Id,
+            IsDone = toDo.IsDone,
         };
 
-        newToDos.Add(newToDo);
-
-        ToDos = newToDos;
+        await _toDoRepository.UpsertToDo(newToDo);
+        await GetToDos();
     }
 }

@@ -5,12 +5,12 @@ namespace Tilt;
 public partial class MainPage : ContentPage
 {
     readonly MainViewModel _viewModel;
-    const string _showAlertKey = "SHOW_ALERT";
+    const string SHOW_ALERT_KEY = "SHOW_ALERT";
 
-    public MainPage()
+    public MainPage(MainViewModel viewModel)
     {
         InitializeComponent();
-        _viewModel = new MainViewModel();
+        _viewModel = viewModel;
         BindingContext = _viewModel;
         ToggleShake();
         Title = $"ToDos of {DateTime.Now:ddd dd MMM yyyy}";
@@ -35,7 +35,7 @@ public partial class MainPage : ContentPage
 
     private async void Accelerometer_ShakeDetected(object? sender, EventArgs e)
     {
-        bool shouldDisplayAlert = Preferences.Default.Get(_showAlertKey, true);
+        bool shouldDisplayAlert = Preferences.Default.Get(SHOW_ALERT_KEY, true);
 
         bool shouldClearAllToDos = shouldDisplayAlert == false;
 
@@ -46,7 +46,7 @@ public partial class MainPage : ContentPage
 
         if (!shouldClearAllToDos) return;
 
-        Preferences.Default.Set(_showAlertKey, false);
+        Preferences.Default.Set(SHOW_ALERT_KEY, false);
 
         _viewModel.ClearAllToDos();
 
