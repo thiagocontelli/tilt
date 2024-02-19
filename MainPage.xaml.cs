@@ -55,7 +55,12 @@ public partial class MainPage : ContentPage
 
     private async void Add_Clicked(object sender, EventArgs e)
     {
-        string toDoDescription = await DisplayPromptAsync("Add new ToDo", "Enter the ToDo description below", "Done");
+        string toDoDescription = await DisplayPromptAsync(
+            title: "Add new ToDo", 
+            message: "Enter the ToDo description below", 
+            accept: "Done", 
+            maxLength: 200
+        );
 
         _viewModel.AddTodo(toDoDescription);
     }
